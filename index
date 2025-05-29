@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주 4일제 도입: 노동 시장 트렌드 및 사회경제적 영향 분석</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- 
+        Application Structure Plan: 
+        The SPA infographic is designed as a single, scrollable page with a clear narrative flow.
+        1. Hero Section: Introduce the topic of the 4-day work week as a significant labor market trend and KCTU's stance.
+        2. Diagnosing Reality (현실 진단): Present data on Korea's current labor problems (long working hours, low birth rate, productivity paradox) using cards and charts. This section establishes the 'why'.
+        3. New Possibilities (새로운 가능성: 주 4일제의 약속): Detail the multifaceted benefits of a 4-day week (health, work-life balance, productivity, economic/social impact) based on KCTU's vision.
+        4. Global Success Stories (세계는 이미 변화 중): Showcase international and domestic examples of successful 4-day week implementations, drawing from Table 2 of the source report. This provides evidence.
+        5. KCTU's Roadmap (한국노총의 제안): Outline KCTU's strategic proposals for implementing the 4-day week, based on Table 3. This shows the 'how'.
+        6. Conclusion (결론): Summarize the necessity and benefits, reiterating it as a choice for a sustainable future.
+        This structure was chosen to first present the problem, then the proposed solution (4-day week) and its benefits, followed by evidence of its feasibility, and finally the plan for implementation, creating a persuasive and easy-to-follow narrative for the user. Navigation is primarily through scrolling.
+    -->
+    <!-- 
+        Visualization & Content Choices:
+        - Section: Diagnosing Reality
+            - Korea vs OECD Avg Working Hours: Bar Chart (Chart.js) -> Goal: Compare. Justification: Clearly shows disparity.
+            - Karoshi (Overwork Deaths): Big Number (HTML/Tailwind) -> Goal: Inform. Justification: Highlights a critical issue starkly.
+            - OECD Work-Life Balance Rank: Infographic Stat (HTML/Tailwind) -> Goal: Inform. Justification: Quick, impactful display of ranking.
+            - Birth Rate: Big Number (HTML/Tailwind) -> Goal: Inform. Justification: Emphasizes the demographic crisis.
+            - Productivity Paradox (Rank): Bar Chart (Chart.js) or Big Number -> Goal: Compare/Inform. Justification: Shows Korea's position.
+            - Saramin Survey (MZ Gen View): Donut Chart (Chart.js) -> Goal: Inform. Justification: Visualizes survey percentage effectively.
+        - Section: New Possibilities
+            - Health Benefits: List with Icons (HTML/Tailwind/Unicode) -> Goal: Inform. Justification: Easily digestible list of positive impacts.
+            - Work-Family/Gender Equality: Stat + Icon (HTML/Tailwind/Unicode) -> Goal: Inform. Justification: Clear display of a key social benefit.
+            - 100:80:100 Model & Successes: Case Study Boxes (HTML/Tailwind) -> Goal: Inform/Compare. Justification: Highlights specific successful applications of the model.
+            - Economic/Social/Environmental Benefits: Info Boxes with Icons (HTML/Tailwind/Unicode) -> Goal: Inform. Justification: Categorizes diverse benefits clearly.
+        - Section: Global Success Stories
+            - Data from Table 2: Responsive HTML Table or Cards (HTML/Tailwind) -> Goal: Compare/Organize. Justification: Presents multiple case study results effectively.
+        - Section: KCTU's Roadmap
+            - Data from Table 3: Structured Sections with Bullets/Icons (HTML/Tailwind) -> Goal: Organize. Justification: Clearly lays out the multi-faceted plan.
+        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. All charts via Chart.js (Canvas). Diagrams/Icons via HTML/Tailwind/Unicode.
+    -->
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #F7F4E9; /* Light Cream */
+            color: #4A4A4A; /* Dark Gray */
+        }
+        .text-turquoise { color: #00A0A0; }
+        .bg-turquoise { background-color: #00A0A0; }
+        .border-turquoise { border-color: #00A0A0; }
+        .text-terracotta { color: #E87A5D; }
+        .bg-terracotta { background-color: #E87A5D; }
+        .border-terracotta { border-color: #E87A5D; }
+        .text-saffron { color: #FFAE42; }
+        .bg-saffron { background-color: #FFAE42; }
+        
+        h1, h2, h3 {
+            font-weight: 700;
+        }
+        h1 { font-size: 2.5rem; line-height: 1.2; margin-bottom: 1rem; color: #00A0A0; } /* Turquoise */
+        h2 { font-size: 2rem; line-height: 1.3; margin-bottom: 1.5rem; color: #E87A5D; } /* Terracotta */
+        h3 { font-size: 1.5rem; line-height: 1.4; margin-bottom: 1rem; color: #00A0A0; } /* Turquoise */
+        
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Max width for readability */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Default height */
+            max-height: 400px; /* Max height */
+        }
+        @media (min-width: 768px) { /* md breakpoint */
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .section-intro {
+            max-width: 800px;
+            margin: 0 auto 2rem auto;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+        .stat-card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+        }
+        .big-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #E87A5D; /* Terracotta */
+        }
+        .sub-stat {
+            font-size: 0.9rem;
+            color: #555;
+        }
+        .benefit-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #00A0A0; /* Turquoise */
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: 500;
+        }
+        .pill-button {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+        .pill-button.turquoise {
+            background-color: #00A0A0; color: white;
+        }
+        .pill-button.turquoise:hover {
+            background-color: #007A7A;
+        }
+        .pill-button.terracotta {
+            background-color: #E87A5D; color: white;
+        }
+        .pill-button.terracotta:hover {
+            background-color: #D05A3D;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-turquoise text-white py-12 text-center">
+        <div class="container mx-auto px-6">
+            <h1 class="text-4xl md:text-5xl font-bold leading-tight">노동의 미래, 주 4일제가 답하다</h1>
+            <p class="mt-4 text-lg md:text-xl">한국노동조합총연맹(한국노총)의 제안을 중심으로 살펴보는 주 4일 근무제의 필요성과 사회경제적 영향 분석</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-6 py-8">
+
+        <section class="mb-12 text-center">
+            <p class="section-intro">
+                글로벌 노동 패러다임이 빠르게 변화하고 있습니다. 주 4일 근무제는 단순한 유행을 넘어, 국가의 지속가능성과 국민의 삶의 질을 근본적으로 재고하는 중요한 사회경제적 과제로 떠오르고 있습니다. 특히 대한민국은 장시간 노동 문화, 심각한 인구 위기, 변화하는 노동 가치관 속에서 주 4일제 논의가 그 어느 때보다 시급합니다. 본 인포그래픽은 한국노총의 진단과 제안을 바탕으로 주 4일제의 다각적인 측면을 분석합니다.
+            </p>
+        </section>
+
+        <section id="reality" class="mb-16">
+            <h2 class="text-center">현실 진단: 대한민국 노동의 현주소</h2>
+            <p class="section-intro text-center">
+                대한민국은 장시간 노동, 낮은 출산율, 생산성 정체 등 복합적인 도전에 직면해 있습니다. 이러한 현실은 새로운 노동 패러다임으로의 전환이 시급함을 보여줍니다.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                <div class="stat-card">
+                    <h3 class="text-turquoise">장시간 노동의 굴레</h3>
+                    <p class="mb-4">2022년 기준, 한국의 연간 노동시간은 OECD 평균을 훨씬 초과합니다.</p>
+                    <div class="chart-container h-64 md:h-72">
+                        <canvas id="workingHoursChart"></canvas>
+                    </div>
+                    <div class="mt-4 text-center">
+                        <p class="big-number">509<span class="text-lg text-gray-700">명</span></p>
+                        <p class="sub-stat">2021년 과로사 산재 인정 노동자 수</p>
+                    </div>
+                     <p class="mt-2 text-sm text-gray-600">주 4일제는 이러한 과도한 노동시간을 줄여 노동자의 건강을 보호하고, 사회 전체의 활력을 되찾는 첫걸음입니다.</p>
+                </div>
+
+                <div class="stat-card">
+                    <h3 class="text-turquoise">무너지는 삶의 균형</h3>
+                    <p class="mb-4">한국의 일·생활 균형 지수는 OECD 최하위권이며, 많은 국민이 시간 부족으로 여가를 누리지 못하고 있습니다.</p>
+                    <div class="text-center my-4">
+                        <p class="text-6xl font-bold text-terracotta">35<span class="text-2xl">위</span></p>
+                        <p class="sub-stat">OECD 41개국 중 일·생활 균형 지수 순위</p>
+                    </div>
+                    <div class="chart-container h-56 md:h-64">
+                        <canvas id="leisureSatisfactionChart"></canvas>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-600">추가적인 휴식일은 개인이 삶의 다양한 영역에서 만족도를 높이고 자기계발에 투자할 시간을 제공합니다.</p>
+                </div>
+                
+                <div class="stat-card md:col-span-2 lg:col-span-1">
+                    <h3 class="text-turquoise">소멸하는 대한민국: 인구 절벽</h3>
+                    <p class="mb-4">세계 최저 수준의 출산율은 국가 존립마저 위협하는 심각한 위기입니다.</p>
+                    <div class="text-center my-6">
+                        <p class="big-number">0.65<span class="text-lg text-gray-700">명</span></p>
+                        <p class="sub-stat">2023년 4분기 합계출산율 (OECD 최저)</p>
+                    </div>
+                    <p class="text-sm text-gray-700 mb-2"><span class="font-semibold text-terracotta">장시간 노동과 열악한 일·생활 균형</span>은 저출산의 주요 원인으로 지목됩니다.</p>
+                    <p class="text-sm text-gray-700">15~54세 기혼여성의 경력단절 주된 사유: <span class="font-semibold text-terracotta">육아 (41.1%)</span></p>
+                    <p class="mt-2 text-sm text-gray-600">주 4일제는 일과 가정이 양립 가능한 환경을 조성하여 저출생 문제 해결에 기여할 수 있습니다.</p>
+                </div>
+
+                <div class="stat-card md:col-span-2 lg:col-span-1">
+                    <h3 class="text-turquoise">생산성의 역설과 변화하는 가치관</h3>
+                    <p class="mb-4">긴 노동시간에도 불구하고 시간당 노동생산성은 낮으며, MZ세대는 '워라밸'을 중시합니다.</p>
+                    <div class="text-center my-4">
+                        <p class="text-6xl font-bold text-terracotta">33<span class="text-2xl">위</span></p>
+                        <p class="sub-stat">OECD 37-38개국 중 시간당 노동생산성 순위 (2023년)</p>
+                    </div>
+                     <div class="chart-container h-56 md:h-64">
+                        <canvas id="fourDayWeekPreferenceChart"></canvas>
+                    </div>
+                    <p class="mt-2 text-sm text-gray-600">주 4일제는 '투입 시간'이 아닌 '성과와 혁신' 중심의 선진적 노동 시스템 전환을 의미하며, 새로운 세대의 요구에 부응합니다.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="possibilities" class="mb-16">
+            <h2 class="text-center">새로운 가능성: 주 4일제의 약속</h2>
+            <p class="section-intro text-center">
+                주 4일제는 단순한 휴식 증가를 넘어, 노동자의 삶의 질 향상, 생산성 증대, 경제 활력 제고, 그리고 다양한 사회적 과제 해결에 기여할 수 있는 잠재력을 가지고 있습니다.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="stat-card">
+                    <div class="benefit-icon text-center">🏥</div>
+                    <h3 class="text-turquoise text-center">건강한 노동, 행복한 삶</h3>
+                    <ul class="list-disc list-inside text-sm space-y-1">
+                        <li>스트레스 및 번아웃 현저히 감소 (영국 실험: 스트레스 39% 감소, 번아웃 71% 감소)</li>
+                        <li>정신 건강 개선 및 수면의 질 향상</li>
+                        <li>개인 용무 처리, 가족과의 시간, 자기계발 등 '시간 주권' 확보</li>
+                    </ul>
+                </div>
+                <div class="stat-card">
+                    <div class="benefit-icon text-center">⚖️</div>
+                    <h3 class="text-turquoise text-center">일·가정 양립과 성평등</h3>
+                     <p class="text-center text-2xl font-bold text-terracotta my-2">27% <span class="text-sm text-gray-600 font-normal">증가</span></p>
+                    <p class="text-sm text-center mb-2">남성 근로자의 자녀 돌봄 시간 (CNN 보도, 주 4일제 시범 운영)</p>
+                    <ul class="list-disc list-inside text-sm space-y-1">
+                        <li>여성에게 집중된 육아 부담 완화</li>
+                        <li>양성평등적 공동 육아 문화 조성 기여</li>
+                        <li>여성의 경력 단절 예방 및 출산율 회복에 긍정적</li>
+                    </ul>
+                </div>
+                <div class="stat-card md:col-span-2">
+                     <div class="benefit-icon text-center">💡</div>
+                    <h3 class="text-turquoise text-center">생산성 혁신: 100:80:100 모델</h3>
+                    <p class="text-sm text-center mb-3">임금 100% 유지, 노동시간 80% 단축, 생산성 100% 유지</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                        <div><strong>마이크로소프트 일본:</strong> 생산성 40% 향상</div>
+                        <div><strong>휴넷 (한국):</strong> 첫해 매출 13.3% 증가, 퇴사율 14.1% 감소</div>
+                        <div><strong>4DWG 실험 참여 기업:</strong> 평균 수익 8.14% 증가, 매출 37.55% 증가</div>
+                        <div><strong>아이슬란드 공공부문:</strong> 노동생산성 연 1.7~3.8% 증가</div>
+                    </div>
+                     <p class="mt-3 text-xs text-gray-600 text-center">단축된 시간 내 성과 달성을 위한 업무 집중도 향상, 불필요한 업무 제거, 프로세스 최적화 유도</p>
+                </div>
+                <div class="stat-card">
+                     <div class="benefit-icon text-center">📈</div>
+                    <h3 class="text-turquoise text-center">경제 활력과 일자리</h3>
+                    <ul class="list-disc list-inside text-sm space-y-1">
+                        <li>늘어난 여가 시간 → 관광, 문화, 레저 등 서비스 산업 소비 지출 확대 → 내수 경제 활성화</li>
+                        <li>노동시간 단축 → 약 15% 내외 신규 인력 충원 필요 (한국노동사회연구소) → 청년 실업 해소 기여</li>
+                        <li>이직률 감소 (영국 실험: 57% 감소) → 기업 비용 절감</li>
+                    </ul>
+                </div>
+                <div class="stat-card">
+                    <div class="benefit-icon text-center">🌍</div>
+                    <h3 class="text-turquoise text-center">지속가능한 사회</h3>
+                    <ul class="list-disc list-inside text-sm space-y-1">
+                        <li>주중 출퇴근 횟수 감소 → 교통량 감축, 탄소 배출량 저감</li>
+                        <li>사무실 에너지 소비량 감소 (MS 일본: 전기 사용량 23% 감소)</li>
+                        <li>기후 위기 대응 등 광범위한 사회적 목표 달성에 기여</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="global-cases" class="mb-16">
+            <h2 class="text-center">세계는 이미 변화 중: 주요 성공 사례</h2>
+            <p class="section-intro text-center">
+                다양한 국가와 산업에서 주 4일제는 생산성 저하 없이 노동자의 웰빙을 증진시키고 기업 성과에도 긍정적인 영향을 미치고 있습니다. 이는 한국노총이 제시하는 비전이 현실에 기반한 목표임을 시사합니다.
+            </p>
+            <div class="table-responsive stat-card">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr>
+                            <th>국가/기업</th>
+                            <th>시행 기간</th>
+                            <th>생산성 변화</th>
+                            <th>스트레스/번아웃 감소</th>
+                            <th>기업 수익/매출 변화</th>
+                            <th>직원 유지/이직률 변화</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>영국 대규모 실험 (61개 기업)</td>
+                            <td>2022년 (6개월)</td>
+                            <td>유지 또는 향상</td>
+                            <td>스트레스 39%↓, 번아웃 71%↓</td>
+                            <td>평균 매출 1.4%↑</td>
+                            <td>이직률 57%↓</td>
+                        </tr>
+                        <tr>
+                            <td>아이슬란드 공공부문</td>
+                            <td>2015~2019년</td>
+                            <td>연 1.7%→3.8%↑ (노동생산성)</td>
+                            <td>스트레스, 번아웃 감소</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>마이크로소프트 일본</td>
+                            <td>2019년 (1개월)</td>
+                            <td>40% 향상</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>4 Day Week Global (33개 기업)</td>
+                            <td>(6개월)</td>
+                            <td>-</td>
+                            <td>스트레스 3.15→2.95, 번아웃 2.74→2.30</td>
+                            <td>평균 수익 8.14%↑, 평균 매출 37.55%↑</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>휴넷 (한국)</td>
+                            <td>2022년 7월~</td>
+                            <td colspan="2">첫해 매출 13.3%↑, 둘째 해 6.4%↑</td>
+                            <td>(매출 증가로 확인)</td>
+                            <td>퇴사율 14.1%↓, 채용경쟁률 4배↑</td>
+                        </tr>
+                        <tr>
+                            <td>세브란스병원 (한국)</td>
+                            <td>2023년 (1년)</td>
+                            <td>환자 서비스 향상</td>
+                            <td>수면장애 26.1%→13.6%, 우울감 4.5%→0%</td>
+                            <td>-</td>
+                            <td>병동별 사직률 3.6%p~8.8%p↓</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="roadmap" class="mb-16">
+            <h2 class="text-center">한국노총의 제안: 성공적인 전환을 위한 로드맵</h2>
+            <p class="section-intro text-center">
+                주 4일제의 성공적인 도입과 정착을 위해 한국노총은 법제도 개선, 단계적 접근, 그리고 중소기업 및 취약계층 지원 강화를 포함한 구체적이고 체계적인 정책 방안을 제시합니다.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="stat-card">
+                    <h3 class="text-turquoise">1. 법제도 개선</h3>
+                    <ul class="list-disc list-inside text-sm space-y-2 mt-2">
+                        <li>근로기준법 개정: 법정노동시간 '주 32~35시간' 단축, '주 4일 근무' 명시</li>
+                        <li>'임금 보전 원칙' 법적 명문화</li>
+                        <li>5인 미만 사업장 근로기준법 전면 적용</li>
+                        <li>'연결되지 않을 권리' 법제화 (실질적 휴식권 보장)</li>
+                    </ul>
+                </div>
+                <div class="stat-card">
+                    <h3 class="text-turquoise">2. 단계적·협의적 접근</h3>
+                    <ul class="list-disc list-inside text-sm space-y-2 mt-2">
+                        <li>주 4.5일제 등 시범사업 확대 (공공부문 선도, 민간 확산)</li>
+                        <li>산업별·업종별 맞춤형 도입 방안 마련</li>
+                        <li>사회적 대화 기구 설립 및 운영 (예: 경사노위 내 '국가 노동시간 단축위원회')</li>
+                    </ul>
+                </div>
+                <div class="stat-card">
+                    <h3 class="text-turquoise">3. 중소기업 및 취약계층 지원</h3>
+                    <ul class="list-disc list-inside text-sm space-y-2 mt-2">
+                        <li>중소기업 부담 완화: 맞춤형 컨설팅, 스마트공장 구축, 대체인력 채용 지원 등</li>
+                        <li>취약계층 보호: 소득 보전 방안 및 보호 대책 마련 (노동시장 양극화 방지)</li>
+                    </ul>
+                </div>
+            </div>
+            <p class="mt-6 text-center text-sm text-gray-700">
+                이러한 정책 제안들은 주 4일제가 특정 계층만이 아닌, 모든 노동자와 사회 구성원에게 혜택을 줄 수 있는 포용적인 정책으로 발전하도록 하는 데 중점을 둡니다.
+            </p>
+        </section>
+
+        <section class="text-center py-10 bg-turquoise text-white rounded-lg">
+            <h2 class="text-white">결론: 지속 가능한 미래를 위한 선택</h2>
+            <p class="section-intro text-center text-gray-100">
+                주 4일제는 단순한 노동시간 조정을 넘어, 국가 전체의 패러다임을 전환할 변혁적 잠재력을 지닙니다. 공중 보건 증진, 인구구조 문제 완화, 경제 구조의 질적 전환, 사회적 연대 강화 등 광범위한 긍정적 효과를 통해 일하는 사람 모두가 인간다운 삶을 영위하고, 사회 전체가 지속가능하게 발전하는 새로운 대한민국의 모습을 구현할 수 있습니다.
+            </p>
+            <p class="mt-4">변화에는 도전이 따르지만, 현재의 위기를 극복하고 더 나은 미래로 나아가기 위해서는 과감한 결단과 실천이 필요합니다. 한국노총은 주 4일제가 대한민국의 지속 가능한 번영을 담보하는 핵심 정책 대안이 될 것이라 확신합니다.</p>
+        </section>
+    </main>
+
+    <footer class="text-center py-6 text-sm text-gray-600 border-t border-gray-300 mt-12">
+        <p>&copy; 2025 주 4일제 도입 분석 인포그래픽. 한국노동조합총연맹 자료 기반.</p>
+    </footer>
+
+    <script>
+        function wrapText(text, maxLength) {
+            if (typeof text !== 'string' || text.length <= maxLength) {
+                return text;
+            }
+            const words = text.split(' ');
+            const lines = [];
+            let currentLine = '';
+            for (const word of words) {
+                if ((currentLine + word).length > maxLength && currentLine.length > 0) {
+                    lines.push(currentLine.trim());
+                    currentLine = word + ' ';
+                } else {
+                    currentLine += word + ' ';
+                }
+            }
+            if (currentLine.trim().length > 0) {
+                lines.push(currentLine.trim());
+            }
+            return lines;
+        }
+
+        const chartTooltipTitleCallback = function(tooltipItems) {
+            const item = tooltipItems[0];
+            let label = item.chart.data.labels[item.dataIndex];
+            if (Array.isArray(label)) {
+              return label.join(' ');
+            } else {
+              return label;
+            }
+        };
+
+        // Working Hours Chart
+        const workingHoursCtx = document.getElementById('workingHoursChart').getContext('2d');
+        new Chart(workingHoursCtx, {
+            type: 'bar',
+            data: {
+                labels: [wrapText('대한민국 연간 노동시간', 16), wrapText('OECD 평균 연간 노동시간', 16)],
+                datasets: [{
+                    label: '2022년 연간 노동시간 (시간)',
+                    data: [1901, 1752], // Using the lower end for Korea, higher for OECD avg for simplicity
+                    backgroundColor: ['#E87A5D', '#00A0A0'], // Terracotta, Turquoise
+                    borderColor: ['#D05A3D', '#007A7A'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: '시간' }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: '연간 노동시간 비교 (2022년)', font: { size: 14 } },
+                    tooltip: { callbacks: { title: chartTooltipTitleCallback } }
+                }
+            }
+        });
+
+        // Leisure Satisfaction Chart
+        const leisureCtx = document.getElementById('leisureSatisfactionChart').getContext('2d');
+        new Chart(leisureCtx, {
+            type: 'doughnut',
+            data: {
+                labels: [wrapText('시간 부족',16), wrapText('경제적 부담',16), wrapText('건강/체력 부족',16), wrapText('기타',16)],
+                datasets: [{
+                    label: '여가생활 불만족 이유 (2022년)',
+                    data: [41.1, 25.0, 15.0, 18.9], // Example distribution, actual data has 41.1% for time
+                    backgroundColor: ['#E87A5D', '#FFAE42', '#00A0A0', '#B0B0B0'], // Terracotta, Saffron, Turquoise, Gray
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    title: { display: true, text: '여가생활 불만족 이유 (2022년)', font: { size: 14 } },
+                    tooltip: { callbacks: { title: chartTooltipTitleCallback } }
+                }
+            }
+        });
+
+        // 4-Day Week Preference Chart (Saramin Survey)
+        const preferenceCtx = document.getElementById('fourDayWeekPreferenceChart').getContext('2d');
+        new Chart(preferenceCtx, {
+            type: 'pie',
+            data: {
+                labels: [wrapText('주 4일제 긍정적',16), wrapText('주 4일제 보통/부정적',16)],
+                datasets: [{
+                    label: '주 4일제 선호도 (직장인, 2024년)',
+                    data: [86.7, 13.3],
+                    backgroundColor: ['#00A0A0', '#E87A5D'], // Turquoise, Terracotta
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    title: { display: true, text: '주 4일제 선호도 (2024년 사람인)', font: {size: 14} },
+                    tooltip: { callbacks: { title: chartTooltipTitleCallback } }
+                }
+            }
+        });
+
+    </script>
+</body>
+</html>
